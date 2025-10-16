@@ -1,8 +1,8 @@
 package org.example.entities;
 
-
 import org.example.entities.enums.AvailabilityStatus;
 import jakarta.persistence.*;
+
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -11,44 +11,40 @@ import java.time.LocalTime;
 @Table(name = "availabilities")
 public class Availability extends BaseEntity {
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "doctor_id", nullable = false)
     private Doctor doctor;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "jour_semaine", length = 15)
-    private DayOfWeek jourSemaine;
+    @Column(name = "day", length = 15)
+    private DayOfWeek day;
 
-    @Column(name = "heure_debut", nullable = false)
-    private LocalTime heureDebut;
+    @Column(name = "start_time", nullable = false)
+    private LocalTime startTime;
 
-    @Column(name = "heure_fin", nullable = false)
-    private LocalTime heureFin;
+    @Column(name = "end_time", nullable = false)
+    private LocalTime endTime;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "statut", nullable = false, length = 20)
-    private AvailabilityStatus statut;
+    @Column(name = "status", nullable = false, length = 20)
+    private AvailabilityStatus status;
 
-    @Column(name = "date_debut_validite")
-    private LocalDate dateDebutValidite;
+    @Column(name = "start_date")
+    private LocalDate startDate;
 
-    @Column(name = "date_fin_validite")
-    private LocalDate dateFinValidite;
-
-    @Column(name = "recurrent")
-    private Boolean recurrent = false;
+    @Column(name = "end_date")
+    private LocalDate endDate;
 
     public Availability() {
     }
 
-    public Availability(Doctor doctor, DayOfWeek jourSemaine, LocalTime heureDebut,
-                        LocalTime heureFin, AvailabilityStatus statut) {
+    public Availability(Doctor doctor, DayOfWeek day, LocalTime startTime,
+                        LocalTime endTime, AvailabilityStatus status) {
         this.doctor = doctor;
-        this.jourSemaine = jourSemaine;
-        this.heureDebut = heureDebut;
-        this.heureFin = heureFin;
-        this.statut = statut;
-        this.recurrent = false;
+        this.day = day;
+        this.startTime = startTime;
+        this.endTime = endTime;
+        this.status = status;
     }
 
     public Doctor getDoctor() {
@@ -59,59 +55,51 @@ public class Availability extends BaseEntity {
         this.doctor = doctor;
     }
 
-    public DayOfWeek getJourSemaine() {
-        return jourSemaine;
+    public DayOfWeek getDay() {
+        return day;
     }
 
-    public void setJourSemaine(DayOfWeek jourSemaine) {
-        this.jourSemaine = jourSemaine;
+    public void setDay(DayOfWeek day) {
+        this.day = day;
     }
 
-    public LocalTime getHeureDebut() {
-        return heureDebut;
+    public LocalTime getStartTime() {
+        return startTime;
     }
 
-    public void setHeureDebut(LocalTime heureDebut) {
-        this.heureDebut = heureDebut;
+    public void setStartTime(LocalTime startTime) {
+        this.startTime = startTime;
     }
 
-    public LocalTime getHeureFin() {
-        return heureFin;
+    public LocalTime getEndTime() {
+        return endTime;
     }
 
-    public void setHeureFin(LocalTime heureFin) {
-        this.heureFin = heureFin;
+    public void setEndTime(LocalTime endTime) {
+        this.endTime = endTime;
     }
 
-    public AvailabilityStatus getStatut() {
-        return statut;
+    public AvailabilityStatus getStatus() {
+        return status;
     }
 
-    public void setStatut(AvailabilityStatus statut) {
-        this.statut = statut;
+    public void setStatus(AvailabilityStatus status) {
+        this.status = status;
     }
 
-    public LocalDate getDateDebutValidite() {
-        return dateDebutValidite;
+    public LocalDate getStartDate() {
+        return startDate;
     }
 
-    public void setDateDebutValidite(LocalDate dateDebutValidite) {
-        this.dateDebutValidite = dateDebutValidite;
+    public void setStartDate(LocalDate startDate) {
+        this.startDate = startDate;
     }
 
-    public LocalDate getDateFinValidite() {
-        return dateFinValidite;
+    public LocalDate getEndDate() {
+        return endDate;
     }
 
-    public void setDateFinValidite(LocalDate dateFinValidite) {
-        this.dateFinValidite = dateFinValidite;
-    }
-
-    public Boolean getRecurrent() {
-        return recurrent;
-    }
-
-    public void setRecurrent(Boolean recurrent) {
-        this.recurrent = recurrent;
+    public void setEndDate(LocalDate endDate) {
+        this.endDate = endDate;
     }
 }

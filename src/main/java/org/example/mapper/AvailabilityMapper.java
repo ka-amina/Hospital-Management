@@ -12,11 +12,10 @@ public class AvailabilityMapper {
         dto.setId(a.getId());
         dto.setDoctorId(a.getDoctor().getId());
         dto.setDoctorName(a.getDoctor().getNom());
-        dto.setJourSemaine(a.getJourSemaine());
-        dto.setHeureDebut(a.getHeureDebut());
-        dto.setHeureFin(a.getHeureFin());
-        dto.setStatut(a.getStatut().name());
-        dto.setRecurrent(a.getRecurrent());
+        dto.setJourSemaine(a.getDay());
+        dto.setHeureDebut(a.getStartTime());
+        dto.setHeureFin(a.getEndTime());
+        dto.setStatut(a.getStatus().name());
         return dto;
     }
 
