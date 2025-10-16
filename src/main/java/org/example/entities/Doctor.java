@@ -15,7 +15,7 @@ public class Doctor extends User {
     @Column(name = "titre", length = 20)
     private String titre;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)     
     @JoinColumn(name = "specialty_id", nullable = false)
     private Speciality specialty;
 

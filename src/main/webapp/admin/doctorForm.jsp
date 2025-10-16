@@ -5,44 +5,85 @@
   Time: 1:47 AM
   To change this template use File | Settings | File Templates.
 --%>
-<%@ page contentType="text/html; charset=UTF-8" %>
+<%@ page contentType="text/html;charset=UTF-8" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-<jsp:include page="/WEB-INF/template/header.jsp"/>
-<h2><c:out value="${empty dto.id?'Nouveau':'Modifier'}"/> docteur</h2>
-<c:if test="${not empty error}">
-    <div class="alert alert-danger">${error}</div>
-</c:if>
-<form method="post">
-    <input type="hidden" name="id" value="${dto.id}">
-    <div class="mb-3">
-        <label>Nom</label>
-        <input class="form-control" name="nom" value="${dto.nom}" required>
+<jsp:include page="/WEB-INF/template/header.jsp">
+    <jsp:param name="title" value="${empty dto.id ? 'Nouveau docteur' : 'Modifier docteur'}"/>
+</jsp:include>
+
+<div class="max-w-3xl mx-auto px-4 py-8">
+    <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
+        <h2 class="text-xl font-semibold mb-5 text-gray-800 dark:text-gray-100">
+            <c:out value="${empty dto.id ? 'Nouveau docteur' : 'Modifier docteur'}"/>
+        </h2>
+
+        <c:if test="${not empty error}">
+            <div class="mb-4 p-3 rounded-md bg-red-50 dark:bg-red-900/20 text-red-700 dark:text-red-300 text-sm">
+                    ${error}
+            </div>
+        </c:if>
+
+        <form method="post" class="space-y-4">
+            <input type="hidden" name="id" value="${dto.id}">
+
+            <div>
+                <label class="block mb-1 text-sm font-medium text-gray-700 dark:text-gray-300">Nom</label>
+                <input name="nom" value="${dto.nom}" required
+                       class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 rounded-md
+                      focus:outline-none focus:ring-2 focus:ring-indigo-500">
+            </div>
+
+            <div>
+                <label class="block mb-1 text-sm font-medium text-gray-700 dark:text-gray-300">Email</label>
+                <input type="email" name="email" value="${dto.email}" required
+                       class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 rounded-md
+                      focus:outline-none focus:ring-2 focus:ring-indigo-500">
+            </div>
+
+            <div>
+                <label class="block mb-1 text-sm font-medium text-gray-700 dark:text-gray-300">Matricule</label>
+                <input name="matricule" value="${dto.matricule}" required
+                       class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 rounded-md
+                      focus:outline-none focus:ring-2 focus:ring-indigo-500">
+            </div>
+
+            <div>
+                <label class="block mb-1 text-sm font-medium text-gray-700 dark:text-gray-300">Titre</label>
+                <input name="titre" value="${dto.titre}"
+                       class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 rounded-md
+                      focus:outline-none focus:ring-2 focus:ring-indigo-500">
+            </div>
+
+            <div>
+                <label class="block mb-1 text-sm font-medium text-gray-700 dark:text-gray-300">Spécialité</label>
+                <select name="specialtyId" required
+                        class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 rounded-md
+                       focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                    <c:forEach items="${specialities}" var="s">
+                        <option value="${s.id}" ${dto.specialtyId eq s.id ? 'selected' : ''}>${s.nom}</option>
+                    </c:forEach>
+                </select>
+            </div>
+
+            <div class="flex items-center">
+                <input type="checkbox" id="actif" name="actif" ${dto.actif ? 'checked' : ''}
+                       class="h-4 w-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500">
+                <label for="actif" class="ml-2 text-sm text-gray-700 dark:text-gray-300">Actif</label>
+            </div>
+
+            <div class="flex items-center justify-between pt-4">
+                <a href="${pageContext.request.contextPath}/admin/doctors"
+                   class="px-4 py-2 rounded-md bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200
+                  hover:bg-gray-300 dark:hover:bg-gray-600 transition">
+                    Annuler
+                </a>
+                <button type="submit"
+                        class="px-4 py-2 rounded-md bg-indigo-600 text-white hover:bg-indigo-700 transition">
+                    Enregistrer
+                </button>
+            </div>
+        </form>
     </div>
-    <div class="mb-3">
-        <label>Email</label>
-        <input type="email" class="form-control" name="email" value="${dto.email}" required>
-    </div>
-    <div class="mb-3">
-        <label>Matricule</label>
-        <input class="form-control" name="matricule" value="${dto.matricule}" required>
-    </div>
-    <div class="mb-3">
-        <label>Titre</label>
-        <input class="form-control" name="titre" value="${dto.titre}">
-    </div>
-    <div class="mb-3">
-        <label>Spécialité</label>
-        <select class="form-select" name="specialtyId" required>
-            <c:forEach items="${specialities}" var="s">
-                <option value="${s.id}" ${dto.specialtyId eq s.id?'selected':''}>${s.nom}</option>
-            </c:forEach>
-        </select>
-    </div>
-    <div class="mb-3 form-check">
-        <input type="checkbox" class="form-check-input" name="actif" id="actif" ${dto.actif?'checked':''}>
-        <label class="form-check-label" for="actif">Actif</label>
-    </div>
-    <button type="submit" class="btn btn-primary">Enregistrer</button>
-    <a class="btn btn-secondary" href="${pageContext.request.contextPath}/admin/doctors">Annuler</a>
-</form>
+</div>
+
 <jsp:include page="/WEB-INF/template/footer.jsp"/>

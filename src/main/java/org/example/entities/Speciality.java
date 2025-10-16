@@ -17,7 +17,7 @@ public class Speciality extends BaseEntity {
     @Column(name = "description", columnDefinition = "TEXT")
     private String description;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "department_id", nullable = false)
     private Department department;
 
