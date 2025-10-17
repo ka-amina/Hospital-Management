@@ -3,7 +3,6 @@
   User: Youcode
   Date: 10/15/2025
   Time: 1:46 AM
-  To change this template use File | Settings | File Templates.
 --%>
 <%@ page contentType="text/html;charset=UTF-8" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
@@ -27,8 +26,8 @@
         </div>
     </c:if>
     <c:if test="${param.msg eq 'doc-updated'}">
-        <div class="mb-4 p-3 rounded-md bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300 text-sm">
-            Docteur modifié
+        <div class="mb-4 p-3 rounded-md bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300 text-sm">Docteur
+            modifié
         </div>
     </c:if>
     <c:if test="${param.msg eq 'doc-deleted'}">
@@ -64,10 +63,13 @@
               </span>
                     </td>
                     <td class="px-6 py-4 text-center space-x-2">
+                        <!-- Modifier -->
                         <a href="${pageContext.request.contextPath}/admin/doctors/edit?id=${d.id}"
                            class="inline-flex items-center px-3 py-1.5 rounded-md bg-yellow-500 text-white hover:bg-yellow-600">
                             <i class="fa-solid fa-pen-to-square mr-1"></i>Modifier
                         </a>
+
+                        <!-- Supprimer -->
                         <form action="${pageContext.request.contextPath}/admin/doctors/delete" method="post"
                               class="inline"
                               onsubmit="return confirm('Supprimer ?');">
@@ -76,6 +78,45 @@
                                 <i class="fa-solid fa-trash mr-1"></i>Supprimer
                             </button>
                         </form>
+
+                        <!-- Générer la semaine -->
+                        <!-- Générer la semaine -->
+                        <form action="${pageContext.request.contextPath}/admin/availability/generate"
+                              method="post" class="inline space-x-1">
+
+                            <input type="hidden" name="doctorId" value="${d.id}">
+
+                            <!-- jour -->
+                            <select name="day" required
+                                    class="px-2 py-1 border rounded dark:bg-gray-700 dark:text-gray-200">
+                                <option value="">-- jour --</option>
+                                <option value="MONDAY">Lundi</option>
+                                <option value="TUESDAY">Mardi</option>
+                                <option value="WEDNESDAY">Mercredi</option>
+                                <option value="THURSDAY">Jeudi</option>
+                                <option value="FRIDAY">Vendredi</option>
+                            </select>
+
+                            <!-- date de début (obligatoire) -->
+                            <input type="date" name="startDate" required
+                                   class="px-2 py-1 border rounded dark:bg-gray-700 dark:text-gray-200"
+                                   value="<%= java.time.LocalDate.now() %>">
+
+                            <!-- date de fin (facultative, sinon on utilise startDate) -->
+                            <input type="date" name="endDate"
+                                   class="px-2 py-1 border rounded dark:bg-gray-700 dark:text-gray-200">
+
+                            <button type="submit"
+                                    class="ml-2 inline-flex items-center px-3 py-1.5 rounded-md bg-indigo-600 text-white hover:bg-indigo-700">
+                                <i class="fa-solid fa-calendar-plus mr-1"></i>Générer
+                            </button>
+                        </form>
+
+                        <!-- Voir l'agenda -->
+                        <a href="${pageContext.request.contextPath}/doctor/schedule?doctorId=${d.id}"
+                           class="inline-flex items-center px-3 py-1.5 rounded-md bg-sky-600 text-white hover:bg-sky-700">
+                            <i class="fa-solid fa-calendar-day mr-1"></i>Agenda
+                        </a>
                     </td>
                 </tr>
             </c:forEach>

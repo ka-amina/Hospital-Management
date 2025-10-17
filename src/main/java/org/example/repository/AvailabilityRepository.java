@@ -29,7 +29,7 @@ public class AvailabilityRepository {
                             "SELECT a FROM Availability a " +
                                     "JOIN FETCH a.doctor " +
                                     "WHERE a.doctor.id = :doc " +
-                                    "ORDER BY a.jourSemaine, a.heureDebut", Availability.class)
+                                    "ORDER BY a.startDate, a.startTime", Availability.class)
                     .setParameter("doc", doctorId)
                     .getResultList();
         } finally {
@@ -54,9 +54,9 @@ public class AvailabilityRepository {
             return em.createQuery(
                             "SELECT a FROM Availability a " +
                                     "WHERE a.doctor.id = :doc " +
-                                    "AND a.jourSemaine = :day " +
-                                    "AND a.statut = :status " +
-                                    "AND ( :debut < a.heureFin AND :fin > a.heureDebut ) ", Availability.class)
+                                    "AND a.startDate = :day " +
+                                    "AND a.status = :status " +
+                                    "AND ( :debut < a.endTime AND :fin > a.startDate ) ", Availability.class)
                     .setParameter("doc", doctorId)
                     .setParameter("day", day)
                     .setParameter("status", AvailabilityStatus.AVAILABLE)
@@ -108,6 +108,30 @@ public class AvailabilityRepository {
         } catch (Exception e) {
             if (em.getTransaction().isActive()) em.getTransaction().rollback();
             throw e;
+        } finally {
+            em.close();
+        }
+    }
+
+    /* ------------------------------------------------------------------
+   Returns the slot that starts exactly at the given time
+   (or empty if none).
+   ------------------------------------------------------------------ */
+    public Optional<Availability> findSlot(Long doctorId,
+                                           DayOfWeek day,
+                                           LocalTime start) {
+        EntityManager em = em();
+        try {
+            return em.createQuery(
+                            "SELECT a FROM Availability a " +
+                                    "WHERE a.doctor.id = :doc " +
+                                    "AND a.day = :day " +
+                                    "AND a.startTime = :start", Availability.class)
+                    .setParameter("doc", doctorId)
+                    .setParameter("day", day)
+                    .setParameter("start", start)
+                    .getResultStream()
+                    .findFirst();
         } finally {
             em.close();
         }

@@ -9,10 +9,16 @@ import org.example.repository.AvailabilityRepository;
 import org.example.repository.DoctorRepository;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
+import org.example.utils.SlotFactory;
+import org.example.dto.SlotRow;
+import java.time.temporal.TemporalAdjusters;
 
 import java.time.DayOfWeek;
+import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @ApplicationScoped
@@ -22,34 +28,70 @@ public class AvailabilityService {
     AvailabilityRepository repository;
     @Inject
     DoctorRepository doctorRepository;
-    @Inject
-    AvailabilityMapper mapper;
 
-    public List<AvailabilityDTO> findByDoctor(Long doctorId) {
-        return repository.findByDoctor(doctorId)
-                .stream()
-                .map(mapper::toDto)
-                .collect(Collectors.toList());
-    }
+    /* Create default slots for one doctor & one day */
+    public void generateDefaultSlots(Long doctorId,
+                                     DayOfWeek day,
+                                     LocalDate startDate,   // <─ NEW
+                                     LocalDate endDate) {   // <─ NEW
 
-    public AvailabilityDTO addSlot(Long doctorId, DayOfWeek day,
-                                   LocalTime debut, LocalTime fin) {
-        if (debut.isAfter(fin) || debut.equals(fin))
-            throw new RuntimeException("Heure de début doit être avant heure de fin");
-
-        if (repository.findOverlap(doctorId, day, debut, fin).isPresent())
-            throw new RuntimeException("Chevauchement détecté – créneau impossible");
-
-        Doctor d = doctorRepository.findById(doctorId)
+        Doctor doctor = doctorRepository.findById(doctorId)
                 .orElseThrow(() -> new RuntimeException("Doctor not found"));
-        Availability a = new Availability(d, day, debut, fin, AvailabilityStatus.AVAILABLE);
-        repository.create(a);
-        return mapper.toDto(a);
+
+        List<LocalTime[]> occupied = fetchOccupiedTimes(doctorId, day);
+
+        List<Availability> slots = SlotFactory.generate(doctor, day, occupied,
+                startDate, endDate);
+
+        slots.forEach(repository::create);
     }
 
-    public void deleteSlot(Long slotId) {
-        repository.findById(slotId)
-                .orElseThrow(() -> new RuntimeException("Slot not found"));
-        repository.delete(slotId);
+    /* Helper: query existing appointments for the same day */
+    private List<LocalTime[]> fetchOccupiedTimes(Long doctorId, DayOfWeek day) {
+        // naive example: convert DayOfWeek → concrete date
+        // here we simply return empty list; adapt to your AppointmentRepository
+        return List.of();
     }
+
+    public List<SlotRow> buildWeekSlots(Long doctorId,
+                                        int weekOffset,
+                                        LocalDate startDate,
+                                        LocalDate endDate) {
+
+        List<SlotRow> rows = new ArrayList<>();
+        Doctor doctor = doctorRepository.findById(doctorId)
+                .orElseThrow(() -> new RuntimeException("Doctor not found"));
+
+        /* Monday of the requested week */
+        LocalDate monday = LocalDate.now()
+                .with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY))
+                .plusWeeks(weekOffset);
+
+        /* Loop only working days */
+        for (DayOfWeek day : DayOfWeek.values()) {
+            if (day == DayOfWeek.SATURDAY || day == DayOfWeek.SUNDAY) continue;
+
+            /* 08:00 – 18:00  30-min slot + 5-min buffer  (skip lunch) */
+            for (int slot = 0; slot < 20; slot++) {
+                LocalTime start = LocalTime.of(8, 0).plusMinutes(slot * 35);
+                LocalTime end = start.plusMinutes(30);
+
+                if (start.getHour() == 13) continue;          // lunch break
+
+                /* 1.  look for an EXISTING database row  */
+                Optional<Availability> opt = repository.findSlot(doctorId, day, start);
+
+                /* 2.  only if it exists AND status == AVAILABLE  ->  Libre  */
+                if (opt.isPresent() && opt.get().getStatus() == AvailabilityStatus.AVAILABLE) {
+                    Availability av = opt.get();
+                    rows.add(new SlotRow(av.getId(), day, start, end, AvailabilityStatus.AVAILABLE));
+                } else {
+                    /* 3.  no row  ->  always Occupé  */
+                    rows.add(new SlotRow(null, day, start, end, AvailabilityStatus.UNAVAILABLE));
+                }
+            }
+        }
+        return rows;
+    }
+
 }
