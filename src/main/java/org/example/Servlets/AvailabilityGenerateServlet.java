@@ -29,6 +29,6 @@ public class AvailabilityGenerateServlet extends HttpServlet {
         service.generateDefaultSlots(doctorId, day, startDate, endDate);
 
         resp.sendRedirect(req.getContextPath()
-                + "/doctor/schedule?doctorId=" + doctorId + "&msg=generated");
+                + "/org/example/Servlets/doctor/schedule?doctorId=" + doctorId + "&msg=generated");
     }
 }
