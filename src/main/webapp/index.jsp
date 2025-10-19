@@ -1,7 +1,7 @@
 <%@ page contentType="text/html;charset=UTF-8" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
-<jsp:include page="/WEB-INF/template/header.jsp">
+<jsp:include page="/WEB-INF/template/customerHeader.jsp">
     <jsp:param name="title" value="Accueil – Clinique Digitale"/>
 </jsp:include>
 
