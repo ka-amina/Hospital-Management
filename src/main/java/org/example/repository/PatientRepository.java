@@ -50,6 +50,16 @@ public class PatientRepository {
         }
     }
 
+    public java.util.List<Patient> findAll() {
+        EntityManager em = em();
+        try {
+            return em.createQuery("SELECT p FROM Patient p ORDER BY p.nom", Patient.class)
+                    .getResultList();
+        } finally {
+            em.close();
+        }
+    }
+
     public void create(Patient p) {
         EntityManager em = em();
         try {

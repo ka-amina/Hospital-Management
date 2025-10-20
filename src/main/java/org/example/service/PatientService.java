@@ -5,6 +5,8 @@ import jakarta.inject.Inject;
 import org.example.dto.PatientDTO;
 import org.example.entities.Patient;
 import org.example.repository.PatientRepository;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @ApplicationScoped
 public class PatientService {
@@ -31,5 +33,18 @@ public class PatientService {
 
         repository.create(p);
         return p;
+    }
+
+    public List<PatientDTO> findAll() {
+        return repository.findAll().stream().map(p -> {
+            PatientDTO dto = new PatientDTO();
+            dto.setId(p.getId());
+            dto.setNom(p.getNom());
+            dto.setEmail(p.getEmail());
+            dto.setCin(p.getCin());
+            dto.setDateNaissance(p.getDateNaissance());
+            dto.setSexe(p.getSexe());
+            return dto;
+        }).collect(Collectors.toList());
     }
 }

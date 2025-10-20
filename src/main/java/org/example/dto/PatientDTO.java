@@ -4,6 +4,7 @@ import java.time.LocalDate;
 import org.example.entities.enums.Gender;
 
 public class PatientDTO {
+    private Long id;
     private String nom;
     private String email;
     private String password;
@@ -57,5 +58,13 @@ public class PatientDTO {
 
     public void setSexe(Gender sexe) {
         this.sexe = sexe;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 }
