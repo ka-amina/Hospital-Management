@@ -22,21 +22,27 @@ public class AvailabilityGenerateServlet extends HttpServlet {
             throws ServletException, IOException {
 
         Long doctorId = Long.valueOf(req.getParameter("doctorId"));
-        DayOfWeek day = DayOfWeek.valueOf(req.getParameter("day")); // MONDAY etc.
         LocalDate startDate = LocalDate.parse(req.getParameter("startDate"));
-        LocalDate endDate = startDate;
-        String endRaw = req.getParameter("endDate");
-        if (endRaw != null && !endRaw.isBlank()) {
-            LocalDate parsed = LocalDate.parse(endRaw);
-            if (parsed.isBefore(startDate)) {
-                req.getSession().setAttribute("error", "endDate must be >= startDate");
-                resp.sendRedirect(req.getContextPath() + "/admin/availability?doctorId=" + doctorId);
-                return;
-            }
-            endDate = parsed;
+        LocalDate endDate = LocalDate.parse(req.getParameter("endDate"));
+        
+        // Validation: endDate doit être >= startDate
+        if (endDate.isBefore(startDate)) {
+            req.getSession().setAttribute("error", "La date de fin doit être supérieure ou égale à la date de début");
+            resp.sendRedirect(req.getContextPath() + "/doctor/schedule?doctorId=" + doctorId);
+            return;
         }
 
-        service.generateDefaultSlots(doctorId, day, startDate, endDate);
+        // Générer les disponibilités pour chaque jour entre startDate et endDate
+        LocalDate currentDate = startDate;
+        while (!currentDate.isAfter(endDate)) {
+            DayOfWeek day = currentDate.getDayOfWeek();
+            
+            // Générer les créneaux pour ce jour spécifique
+            service.generateDefaultSlots(doctorId, day, currentDate, currentDate);
+            
+            // Passer au jour suivant
+            currentDate = currentDate.plusDays(1);
+        }
 
         resp.sendRedirect(req.getContextPath() + "/doctor/schedule?doctorId=" + doctorId + "&msg=generated");
     }

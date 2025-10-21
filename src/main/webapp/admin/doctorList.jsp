@@ -79,35 +79,26 @@
                             </button>
                         </form>
 
-                        <!-- Générer la semaine -->
-                        <!-- Générer la semaine -->
+                        <!-- Générer les disponibilités -->
                         <form action="${pageContext.request.contextPath}/admin/availability/generate"
                               method="post" class="inline space-x-1">
 
                             <input type="hidden" name="doctorId" value="${d.id}">
 
-                            <!-- jour -->
-                            <select name="day" required
-                                    class="px-2 py-1 border rounded dark:bg-gray-700 dark:text-gray-200">
-                                <option value="">-- jour --</option>
-                                <option value="MONDAY">Lundi</option>
-                                <option value="TUESDAY">Mardi</option>
-                                <option value="WEDNESDAY">Mercredi</option>
-                                <option value="THURSDAY">Jeudi</option>
-                                <option value="FRIDAY">Vendredi</option>
-                            </select>
-
                             <!-- date de début (obligatoire) -->
                             <input type="date" name="startDate" required
-                                   class="px-2 py-1 border rounded dark:bg-gray-700 dark:text-gray-200"
+                                   placeholder="Date début"
+                                   class="px-2 py-1 border rounded dark:bg-gray-700 dark:text-gray-200 text-sm"
                                    value="<%= java.time.LocalDate.now() %>">
 
-                            <!-- date de fin (facultative, sinon on utilise startDate) -->
-                            <input type="date" name="endDate"
-                                   class="px-2 py-1 border rounded dark:bg-gray-700 dark:text-gray-200">
+                            <!-- date de fin (obligatoire) -->
+                            <input type="date" name="endDate" required
+                                   placeholder="Date fin"
+                                   class="px-2 py-1 border rounded dark:bg-gray-700 dark:text-gray-200 text-sm"
+                                   value="<%= java.time.LocalDate.now() %>">
 
                             <button type="submit"
-                                    class="ml-2 inline-flex items-center px-3 py-1.5 rounded-md bg-indigo-600 text-white hover:bg-indigo-700">
+                                    class="inline-flex items-center px-3 py-1.5 rounded-md bg-indigo-600 text-white hover:bg-indigo-700 text-sm">
                                 <i class="fa-solid fa-calendar-plus mr-1"></i>Générer
                             </button>
                         </form>
