@@ -23,7 +23,10 @@
             </div>
         </c:if>
 
-        <form method="post" class="space-y-4">
+        <form method="post" 
+              action="${empty dto.id ? pageContext.request.contextPath.concat('/admin/doctors/new') 
+                                     : pageContext.request.contextPath.concat('/admin/doctors/edit')}" 
+              class="space-y-4">
             <input type="hidden" name="id" value="${dto.id}">
 
             <div>
@@ -66,7 +69,7 @@
             </div>
 
             <div class="flex items-center">
-                <input type="checkbox" id="actif" name="actif" ${dto.actif ? 'checked' : ''}
+                <input type="checkbox" id="actif" name="actif" value="true" ${dto.actif ? 'checked' : ''}
                        class="h-4 w-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500">
                 <label for="actif" class="ml-2 text-sm text-gray-700 dark:text-gray-300">Actif</label>
             </div>
