@@ -130,4 +130,26 @@ public class AvailabilityRepository {
             em.close();
         }
     }
+
+    /**
+     * Find all doctor IDs who have at least one available slot on a specific date
+     */
+    public List<Long> findDoctorIdsWithAvailabilityOnDate(java.time.LocalDate date) {
+        EntityManager em = em();
+        try {
+            DayOfWeek dayOfWeek = date.getDayOfWeek();
+            return em.createQuery(
+                    "SELECT DISTINCT a.doctor.id FROM Availability a " +
+                    "WHERE a.day = :day " +
+                    "AND a.status = :status " +
+                    "AND (a.startDate IS NULL OR :date BETWEEN a.startDate AND a.endDate)",
+                    Long.class)
+                    .setParameter("day", dayOfWeek)
+                    .setParameter("status", AvailabilityStatus.AVAILABLE)
+                    .setParameter("date", date)
+                    .getResultList();
+        } finally {
+            em.close();
+        }
+    }
 }

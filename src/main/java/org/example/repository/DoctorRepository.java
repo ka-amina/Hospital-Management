@@ -21,12 +21,17 @@ public class DoctorRepository {
     }
 
     public List<Doctor> findAll() {
-        return em().createQuery(
-                        "SELECT d FROM Doctor d " +
-                                "JOIN FETCH d.specialty s " +
-                                "JOIN FETCH s.department " +
-                                "ORDER BY d.nom", Doctor.class)
-                .getResultList();
+        EntityManager em = em();
+        try {
+            return em.createQuery(
+                            "SELECT d FROM Doctor d " +
+                                    "JOIN FETCH d.specialty s " +
+                                    "JOIN FETCH s.department " +
+                                    "ORDER BY d.nom", Doctor.class)
+                    .getResultList();
+        } finally {
+            em.close();
+        }
     }
 
     public Optional<Doctor> findById(Long id) {
