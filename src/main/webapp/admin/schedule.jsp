@@ -42,13 +42,14 @@
 
     <!-- Generate default week (admin only) -->
     <c:if test="${sessionScope.userRole eq 'ADMIN'}">
-            <form method="post" action="${pageContext.request.contextPath}/admin/availability/generate"
+        <form method="post" action="${pageContext.request.contextPath}/admin/availability/generate"
               class="mb-4">
             <input type="hidden" name="doctorId" value="${doctorId}">
-                <input type="hidden" name="startDate" value="${monday}" />
-                <input type="hidden" name="endDate" value="${monday.plusDays(4)}" />
-            <button class="px-4 py-2 rounded-md bg-indigo-600 text-white hover:bg-indigo-700">
-                                    Générer la semaine par défaut
+            <%-- Format LocalDate to ISO string (YYYY-MM-DD) --%>
+            <input type="hidden" name="startDate" value="<%= ((java.time.LocalDate) request.getAttribute("monday")).toString() %>" />
+            <input type="hidden" name="endDate" value="<%= ((java.time.LocalDate) request.getAttribute("monday")).plusDays(4).toString() %>" />
+            <button type="submit" class="px-4 py-2 rounded-md bg-indigo-600 text-white hover:bg-indigo-700">
+                <i class="fa-solid fa-calendar-plus mr-2"></i>Générer la semaine par défaut
             </button>
         </form>
     </c:if>
