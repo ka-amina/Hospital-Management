@@ -31,12 +31,10 @@ public class LoginServlet extends HttpServlet {
         try {
             org.example.entities.User user = userService.authenticate(email, password);
 
-            /* create session */
             HttpSession session = req.getSession();
             session.setAttribute("authUser", user);
             session.setAttribute("userRole", user.getRole().name());
 
-            /* remember-me cookie (30 days) */
             if (remember) {
                 Cookie c = new Cookie("remember", user.getId() + ":" + UUID.randomUUID());
                 c.setMaxAge(30 * 24 * 60 * 60);
@@ -45,7 +43,6 @@ public class LoginServlet extends HttpServlet {
                 resp.addCookie(c);
             }
 
-            /* role-based landing */
             String target = req.getContextPath() + "/" + user.getRole().name().toLowerCase() + "/dashboard";
             resp.sendRedirect(target);
 

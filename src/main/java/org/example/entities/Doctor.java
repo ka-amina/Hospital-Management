@@ -2,6 +2,7 @@ package org.example.entities;
 
 import org.example.entities.enums.Role;
 import jakarta.persistence.*;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,7 +16,7 @@ public class Doctor extends User {
     @Column(name = "titre", length = 20)
     private String titre;
 
-    @ManyToOne(fetch = FetchType.EAGER)     
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "specialty_id", nullable = false)
     private Speciality specialty;
 

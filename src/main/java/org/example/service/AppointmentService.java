@@ -35,9 +35,7 @@ public class AppointmentService {
         return repository.findHistoryByPatient(patientId);
     }
 
-    /**
-     * Cancel appointment if allowed (must be at least 12 hours before appointment start)
-     */
+
     public boolean cancelIfAllowed(Long appointmentId) {
         Appointment a = repository.findById(appointmentId).orElseThrow(() -> new RuntimeException("Appointment not found"));
         LocalDate date = a.getDateRdv();

@@ -17,15 +17,12 @@ public final class SlotFactory {
     private static final LocalTime END_LUNCH = LocalTime.of(14, 0);
 
     private static final int SLOT_MINUTES = 30;
-    private static final int BUFFER_MINUTES = 5;
+    private static final int BUFFER_MINUTES = 5;  // 5 min buffer between appointments
 
     private SlotFactory() {
     }
 
-    /**
-     * Generates 30-min slots (plus 5 min buffer) for one doctor & one day.
-     * Existing appointments are excluded (pass them as occupied times).
-     */
+
     public static List<Availability> generate(Doctor doctor,
                                               DayOfWeek day,
                                               List<LocalTime[]> occupiedTimes, LocalDate startDate, LocalDate endDate) {
@@ -49,7 +46,6 @@ public final class SlotFactory {
                 continue;
             }
 
-            // skip if overlaps an existing appointment
             if (overlaps(cursor, slotEnd, occupiedTimes)) {
                 cursor = cursor.plusMinutes(SLOT_MINUTES + BUFFER_MINUTES);
                 continue;

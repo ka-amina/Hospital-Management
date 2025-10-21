@@ -14,9 +14,17 @@ public class DashboardService {
     @Inject
     DashboardRepository repository;
 
-    public long totalPatients() { return repository.countPatients(); }
-    public long totalDoctors() { return repository.countDoctors(); }
-    public long totalAppointments() { return repository.countAppointments(); }
+    public long totalPatients() {
+        return repository.countPatients();
+    }
+
+    public long totalDoctors() {
+        return repository.countDoctors();
+    }
+
+    public long totalAppointments() {
+        return repository.countAppointments();
+    }
 
     public double cancellationRateLastDays(int days) {
         LocalDate since = LocalDate.now().minusDays(days);
@@ -26,5 +34,7 @@ public class DashboardService {
         return (canceled * 100.0) / total;
     }
 
-    public List<Appointment> upcomingAppointments(int limit) { return repository.findUpcomingAppointments(limit); }
+    public List<Appointment> upcomingAppointments(int limit) {
+        return repository.findUpcomingAppointments(limit);
+    }
 }

@@ -3,6 +3,7 @@ package org.example.entities;
 import org.example.entities.enums.AppointmentStatus;
 import org.example.entities.enums.AppointmentType;
 import jakarta.persistence.*;
+
 import java.time.LocalDate;
 import java.time.LocalTime;
 

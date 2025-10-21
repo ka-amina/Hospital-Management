@@ -44,7 +44,6 @@ public class AppointmentMapper {
         a.setType(dto.getType());
         a.setMotif(dto.getMotif());
         if (dto.getDureeMinutes() != null) a.setDureeMinutes(dto.getDureeMinutes());
-        // ensure statut is set to a default so DB NOT NULL constraint is satisfied
         if (a.getStatut() == null) {
             a.setStatut(org.example.entities.enums.AppointmentStatus.PLANNED);
         }

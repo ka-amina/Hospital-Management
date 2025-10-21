@@ -38,7 +38,6 @@ public class AppointmentCreateServlet extends HttpServlet {
         AppointmentDTO dto = new AppointmentDTO();
         dto.setDoctorId(Long.valueOf(req.getParameter("doctorId")));
         dto.setPatientId(Long.valueOf(req.getParameter("patientId")));
-        // parse date and time
         try {
             dto.setDateRdv(java.time.LocalDate.parse(req.getParameter("dateRdv")));
             dto.setHeureRdv(java.time.LocalTime.parse(req.getParameter("heureRdv")));

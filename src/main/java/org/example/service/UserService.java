@@ -13,11 +13,9 @@ public class UserService {
     @Inject
     UserRepository repository;
 
-    /* ---------- authentication ---------- */
     public User authenticate(String email, String rawPassword) {
         User u = repository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("Identifiants incorrects"));
-        /* plain-text comparison */
         if (!rawPassword.equals(u.getPassword())) {
             throw new RuntimeException("Identifiants incorrects");
         }
@@ -27,7 +25,6 @@ public class UserService {
         return u;
     }
 
-    /* ---------- CRUD helpers ---------- */
     public Optional<User> findById(Long id) {
         return repository.findById(id);
     }

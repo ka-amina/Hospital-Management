@@ -29,7 +29,6 @@ public class DoctorScheduleServlet extends HttpServlet {
     protected void doGet(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
 
-        /* ---- 1.  doctorId : optional (show a list to choose) ---- */
         java.util.List<DoctorDTO> doctors = doctorService.findAll();
         req.setAttribute("doctors", doctors);
 
@@ -37,7 +36,7 @@ public class DoctorScheduleServlet extends HttpServlet {
         Long doctorId = null;
         if (rawId == null || rawId.isBlank()) {
             if (!doctors.isEmpty()) {
-                doctorId = doctors.get(0).getId(); // default to first doctor
+                doctorId = doctors.get(0).getId();
             } else {
                 resp.sendError(HttpServletResponse.SC_BAD_REQUEST,
                         "No doctor available. Add a doctor first.");
@@ -57,7 +56,6 @@ public class DoctorScheduleServlet extends HttpServlet {
             }
         }
 
-        /* ---- 3.  compute Monday-Friday for the requested week ---- */
         LocalDate monday = LocalDate.now()
                 .with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY))
                 .plusWeeks(week);

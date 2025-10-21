@@ -26,14 +26,12 @@ public class AdminDashboardServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        /* metrics */
         req.setAttribute("totalPatients", dashboardService.totalPatients());
         req.setAttribute("totalDoctors", dashboardService.totalDoctors());
         req.setAttribute("totalAppointments", dashboardService.totalAppointments());
         req.setAttribute("cancellationRate", String.format("%.1f", dashboardService.cancellationRateLastDays(30)));
         req.setAttribute("upcomingAppointments", dashboardService.upcomingAppointments(10));
 
-        /* lists used by the existing JSP */
         req.setAttribute("departments", departmentService.findAll());
         req.setAttribute("specialities", specialityService.findAll());
 

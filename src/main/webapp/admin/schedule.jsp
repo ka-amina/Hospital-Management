@@ -66,67 +66,89 @@
             </thead>
             <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
 
-            <%-- Build time axis 08:00 – 18:00 30 min + 5 min buffer --%>
-            <c:forEach begin="0" end="19" varStatus="s">
-                <c:set var="start" value="${s.index*35}"/> <%-- 30+5 --%>
+            <%-- Morning slots: 08:00 to 12:05 (8 slots) --%>
+            <c:forEach begin="0" end="7" varStatus="s">
+                <c:set var="start" value="${s.index*35}"/>
                 <c:set var="hour" value="${8 + (start - (start%60))/60}"/>
                 <c:set var="min" value="${start%60}"/>
                 <fmt:formatNumber var="h" value="${hour}" minIntegerDigits="2"/>
                 <fmt:formatNumber var="m" value="${min}" minIntegerDigits="2"/>
                 <tr>
                     <td class="px-4 py-2 font-medium">${h}:${m}</td>
-
                     <c:forEach items="MONDAY,TUESDAY,WEDNESDAY,THURSDAY,FRIDAY" var="day">
-                        <c:set var="lunch" value="${hour eq 13}"/>
                         <td class="px-2 py-2 text-center">
-
-                                <%-- Lunch block --%>
-                            <c:if test="${lunch}">
-                                <span class="inline-block w-full py-2 rounded bg-gray-300 dark:bg-gray-600 text-gray-700 dark:text-gray-300 text-xs">Pause</span>
-                            </c:if>
-
-                                <%-- Find slot for this day/time --%>
                             <c:forEach items="${slots}" var="sl">
-                                <c:if test="${sl.day eq day and sl.start.hour eq hour and sl.start.minute eq min and not lunch}">
-
+                                <c:if test="${sl.day eq day and sl.start.hour eq hour and sl.start.minute eq min}">
                                     <c:choose>
-                                        <%-- doctor is NOT available --%>
                                         <c:when test="${sl.status ne 'AVAILABLE'}">
-        <span class="inline-block w-full py-2 rounded bg-red-100 dark:bg-red-900/30
-                     text-red-700 dark:text-red-300 text-xs">
-            Occupé
-        </span>
+                                            <span class="inline-block w-full py-2 rounded bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-300 text-xs">Occupé</span>
                                         </c:when>
-
-                                        <%-- doctor is available --%>
                                         <c:otherwise>
                                             <c:choose>
                                                 <c:when test="${sessionScope.userRole eq 'PATIENT'}">
-                               <form method="post"
-                                  action="${pageContext.request.contextPath}/patient/appointment/book"
-                                  class="inline">
-                                <input type="hidden" name="availabilityId"
-                                    value="${sl.availabilityId}">
-                                <input type="hidden" name="monday" value="${monday}">
-                                                        <button class="w-full px-2 py-1 rounded bg-green-600 text-white
-                                   hover:bg-green-700 text-xs">
-                                                            Réserver
-                                                        </button>
+                                                    <form method="post" action="${pageContext.request.contextPath}/patient/appointment/book" class="inline">
+                                                        <input type="hidden" name="availabilityId" value="${sl.availabilityId}">
+                                                        <input type="hidden" name="monday" value="${monday}">
+                                                        <button class="w-full px-2 py-1 rounded bg-green-600 text-white hover:bg-green-700 text-xs">Réserver</button>
                                                     </form>
                                                 </c:when>
                                                 <c:otherwise>
-                <span class="inline-block w-full py-2 rounded bg-green-100
-                             dark:bg-green-900/30 text-green-700 dark:text-green-300 text-xs">
-                    Libre
-                </span>
+                                                    <span class="inline-block w-full py-2 rounded bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300 text-xs">Libre</span>
                                                 </c:otherwise>
                                             </c:choose>
                                         </c:otherwise>
                                     </c:choose>
-
                                 </c:if>
                             </c:forEach>
+                        </td>
+                    </c:forEach>
+                </tr>
+            </c:forEach>
 
+            <%-- Lunch break: single row 13:00-14:00 --%>
+            <tr>
+                <td class="px-4 py-2 font-medium">13:00</td>
+                <c:forEach items="MONDAY,TUESDAY,WEDNESDAY,THURSDAY,FRIDAY" var="day">
+                    <td class="px-2 py-2 text-center">
+                        <span class="inline-block w-full py-2 rounded bg-gray-300 dark:bg-gray-600 text-gray-700 dark:text-gray-300 text-xs">Pause</span>
+                    </td>
+                </c:forEach>
+            </tr>
+
+            <%-- Afternoon slots: 14:00 to 17:30 (7 slots) --%>
+            <c:forEach begin="0" end="6" varStatus="s">
+                <c:set var="start" value="${14*60 + s.index*35}"/>
+                <c:set var="hour" value="${(start - (start%60))/60}"/>
+                <c:set var="min" value="${start%60}"/>
+                <fmt:formatNumber var="h" value="${hour}" minIntegerDigits="2"/>
+                <fmt:formatNumber var="m" value="${min}" minIntegerDigits="2"/>
+                <tr>
+                    <td class="px-4 py-2 font-medium">${h}:${m}</td>
+                    <c:forEach items="MONDAY,TUESDAY,WEDNESDAY,THURSDAY,FRIDAY" var="day">
+                        <td class="px-2 py-2 text-center">
+                            <c:forEach items="${slots}" var="sl">
+                                <c:if test="${sl.day eq day and sl.start.hour eq hour and sl.start.minute eq min}">
+                                    <c:choose>
+                                        <c:when test="${sl.status ne 'AVAILABLE'}">
+                                            <span class="inline-block w-full py-2 rounded bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-300 text-xs">Occupé</span>
+                                        </c:when>
+                                        <c:otherwise>
+                                            <c:choose>
+                                                <c:when test="${sessionScope.userRole eq 'PATIENT'}">
+                                                    <form method="post" action="${pageContext.request.contextPath}/patient/appointment/book" class="inline">
+                                                        <input type="hidden" name="availabilityId" value="${sl.availabilityId}">
+                                                        <input type="hidden" name="monday" value="${monday}">
+                                                        <button class="w-full px-2 py-1 rounded bg-green-600 text-white hover:bg-green-700 text-xs">Réserver</button>
+                                                    </form>
+                                                </c:when>
+                                                <c:otherwise>
+                                                    <span class="inline-block w-full py-2 rounded bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300 text-xs">Libre</span>
+                                                </c:otherwise>
+                                            </c:choose>
+                                        </c:otherwise>
+                                    </c:choose>
+                                </c:if>
+                            </c:forEach>
                         </td>
                     </c:forEach>
                 </tr>

@@ -15,8 +15,7 @@ import java.util.Optional;
 @ApplicationScoped
 public class AvailabilityRepository {
 
-    private final EntityManagerFactory emf =
-            Persistence.createEntityManagerFactory("CliniqueDigitalePU");
+    private final EntityManagerFactory emf = Persistence.createEntityManagerFactory("CliniqueDigitalePU");
 
     private EntityManager em() {
         return emf.createEntityManager();
@@ -25,13 +24,7 @@ public class AvailabilityRepository {
     public List<Availability> findByDoctor(Long doctorId) {
         EntityManager em = em();
         try {
-            return em.createQuery(
-                            "SELECT a FROM Availability a " +
-                                    "JOIN FETCH a.doctor " +
-                                    "WHERE a.doctor.id = :doc " +
-                                    "ORDER BY a.startDate, a.startTime", Availability.class)
-                    .setParameter("doc", doctorId)
-                    .getResultList();
+            return em.createQuery("SELECT a FROM Availability a " + "JOIN FETCH a.doctor " + "WHERE a.doctor.id = :doc " + "ORDER BY a.startDate, a.startTime", Availability.class).setParameter("doc", doctorId).getResultList();
         } finally {
             em.close();
         }
@@ -46,23 +39,10 @@ public class AvailabilityRepository {
         }
     }
 
-    /* Return overlapping slot for the same doctor/day */
-    public Optional<Availability> findOverlap(Long doctorId, DayOfWeek day,
-                                              LocalTime debut, LocalTime fin) {
+    public Optional<Availability> findOverlap(Long doctorId, DayOfWeek day, LocalTime debut, LocalTime fin) {
         EntityManager em = em();
         try {
-            return em.createQuery(
-                            "SELECT a FROM Availability a " +
-                                    "WHERE a.doctor.id = :doc " +
-                                    "AND a.startDate = :day " +
-                                    "AND a.status = :status " +
-                                    "AND ( :debut < a.endTime AND :fin > a.startDate ) ", Availability.class)
-                    .setParameter("doc", doctorId)
-                    .setParameter("day", day)
-                    .setParameter("status", AvailabilityStatus.AVAILABLE)
-                    .setParameter("debut", debut)
-                    .setParameter("fin", fin)
-                    .getResultStream().findFirst();
+            return em.createQuery("SELECT a FROM Availability a " + "WHERE a.doctor.id = :doc " + "AND a.startDate = :day " + "AND a.status = :status " + "AND ( :debut < a.endTime AND :fin > a.startDate ) ", Availability.class).setParameter("doc", doctorId).setParameter("day", day).setParameter("status", AvailabilityStatus.AVAILABLE).setParameter("debut", debut).setParameter("fin", fin).getResultStream().findFirst();
         } finally {
             em.close();
         }
@@ -101,8 +81,7 @@ public class AvailabilityRepository {
         EntityManager em = em();
         try {
             em.getTransaction().begin();
-            int rows = em.createQuery("DELETE FROM Availability a WHERE a.id = :id")
-                    .setParameter("id", id).executeUpdate();
+            int rows = em.createQuery("DELETE FROM Availability a WHERE a.id = :id").setParameter("id", id).executeUpdate();
             em.getTransaction().commit();
             return rows == 1;
         } catch (Exception e) {
@@ -113,19 +92,11 @@ public class AvailabilityRepository {
         }
     }
 
-    /**
-     * Atomically mark an availability as UNAVAILABLE only if it is currently AVAILABLE.
-     * Returns true if the update changed one row (i.e. the slot was successfully reserved).
-     */
     public boolean markUnavailableIfAvailable(Long id) {
         EntityManager em = em();
         try {
             em.getTransaction().begin();
-            int rows = em.createQuery("UPDATE Availability a SET a.status = :newStatus WHERE a.id = :id AND a.status = :expected")
-                    .setParameter("newStatus", AvailabilityStatus.UNAVAILABLE)
-                    .setParameter("expected", AvailabilityStatus.AVAILABLE)
-                    .setParameter("id", id)
-                    .executeUpdate();
+            int rows = em.createQuery("UPDATE Availability a SET a.status = :newStatus WHERE a.id = :id AND a.status = :expected").setParameter("newStatus", AvailabilityStatus.UNAVAILABLE).setParameter("expected", AvailabilityStatus.AVAILABLE).setParameter("id", id).executeUpdate();
             em.getTransaction().commit();
             return rows == 1;
         } catch (Exception e) {
@@ -136,19 +107,11 @@ public class AvailabilityRepository {
         }
     }
 
-    /**
-     * Revert an availability to AVAILABLE only if it is currently UNAVAILABLE.
-     * Useful to rollback a reservation when appointment creation fails.
-     */
     public boolean markAvailableIfUnavailable(Long id) {
         EntityManager em = em();
         try {
             em.getTransaction().begin();
-            int rows = em.createQuery("UPDATE Availability a SET a.status = :newStatus WHERE a.id = :id AND a.status = :expected")
-                    .setParameter("newStatus", AvailabilityStatus.AVAILABLE)
-                    .setParameter("expected", AvailabilityStatus.UNAVAILABLE)
-                    .setParameter("id", id)
-                    .executeUpdate();
+            int rows = em.createQuery("UPDATE Availability a SET a.status = :newStatus WHERE a.id = :id AND a.status = :expected").setParameter("newStatus", AvailabilityStatus.AVAILABLE).setParameter("expected", AvailabilityStatus.UNAVAILABLE).setParameter("id", id).executeUpdate();
             em.getTransaction().commit();
             return rows == 1;
         } catch (Exception e) {
@@ -159,28 +122,10 @@ public class AvailabilityRepository {
         }
     }
 
-    /* ------------------------------------------------------------------
-   Returns the slot that starts exactly at the given time
-   (or empty if none).
-   ------------------------------------------------------------------ */
-    public Optional<Availability> findSlot(Long doctorId,
-                                           DayOfWeek day,
-                                           LocalTime start,
-                                           java.time.LocalDate date) {
+    public Optional<Availability> findSlot(Long doctorId, DayOfWeek day, LocalTime start, java.time.LocalDate date) {
         EntityManager em = em();
         try {
-            return em.createQuery(
-                            "SELECT a FROM Availability a " +
-                                    "WHERE a.doctor.id = :doc " +
-                                    "AND a.day = :day " +
-                                    "AND a.startTime = :start " +
-                                    "AND (a.startDate IS NULL OR (:date BETWEEN a.startDate AND a.endDate))", Availability.class)
-                    .setParameter("doc", doctorId)
-                    .setParameter("day", day)
-                    .setParameter("start", start)
-                    .setParameter("date", date)
-                    .getResultStream()
-                    .findFirst();
+            return em.createQuery("SELECT a FROM Availability a " + "WHERE a.doctor.id = :doc " + "AND a.day = :day " + "AND a.startTime = :start " + "AND (a.startDate IS NULL OR (:date BETWEEN a.startDate AND a.endDate))", Availability.class).setParameter("doc", doctorId).setParameter("day", day).setParameter("start", start).setParameter("date", date).getResultStream().findFirst();
         } finally {
             em.close();
         }

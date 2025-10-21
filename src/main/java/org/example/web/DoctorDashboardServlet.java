@@ -16,7 +16,6 @@ public class DoctorDashboardServlet extends HttpServlet {
     protected void doGet(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
 
-        /* 1.  same week calculation as DoctorScheduleServlet */
         int week = 0;
         String raw = req.getParameter("week");
         if (raw != null && !raw.isBlank()) {
@@ -29,10 +28,8 @@ public class DoctorDashboardServlet extends HttpServlet {
                 .with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY))
                 .plusWeeks(week);
 
-        /* 2.  push to JSP */
         req.setAttribute("monday", monday);
         req.setAttribute("week", week);
-        /* if you need doctorId in the JSP links, push it too */
         req.setAttribute("doctorId", req.getParameter("doctorId"));
 
         req.getRequestDispatcher("/WEB-INF/views/doctor/dashboard.jsp").forward(req, resp);

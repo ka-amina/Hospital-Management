@@ -24,8 +24,7 @@ public class AuthFilter implements Filter {
             return;
         }
 
-        /* role check */
-        String path = req.getRequestURI();               // /context/doctor/...
+        String path = req.getRequestURI();
         String rolePrefix = "/" + user.getRole().name().toLowerCase() + "/";
         boolean isAdmin = user.getRole() == Role.ADMIN;
 

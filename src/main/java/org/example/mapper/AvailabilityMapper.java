@@ -19,5 +19,4 @@ public class AvailabilityMapper {
         return dto;
     }
 
-    /* No toEntity() – we create the entity directly in service */
 }

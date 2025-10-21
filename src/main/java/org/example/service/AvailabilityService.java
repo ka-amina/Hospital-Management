@@ -11,6 +11,7 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import org.example.utils.SlotFactory;
 import org.example.dto.SlotRow;
+
 import java.time.temporal.TemporalAdjusters;
 
 import java.time.DayOfWeek;
@@ -29,11 +30,10 @@ public class AvailabilityService {
     @Inject
     DoctorRepository doctorRepository;
 
-    /* Create default slots for one doctor & one day */
     public void generateDefaultSlots(Long doctorId,
                                      DayOfWeek day,
-                                     LocalDate startDate,   // <─ NEW
-                                     LocalDate endDate) {   // <─ NEW
+                                     LocalDate startDate,
+                                     LocalDate endDate) {
 
         Doctor doctor = doctorRepository.findById(doctorId)
                 .orElseThrow(() -> new RuntimeException("Doctor not found"));
@@ -46,10 +46,7 @@ public class AvailabilityService {
         slots.forEach(repository::create);
     }
 
-    /* Helper: query existing appointments for the same day */
     private List<LocalTime[]> fetchOccupiedTimes(Long doctorId, DayOfWeek day) {
-        // naive example: convert DayOfWeek → concrete date
-        // here we simply return empty list; adapt to your AppointmentRepository
         return List.of();
     }
 
@@ -62,36 +59,37 @@ public class AvailabilityService {
         Doctor doctor = doctorRepository.findById(doctorId)
                 .orElseThrow(() -> new RuntimeException("Doctor not found"));
 
-        /* Monday of the requested week */
         LocalDate monday = LocalDate.now()
                 .with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY))
                 .plusWeeks(weekOffset);
 
-        /* Loop only working days */
         for (DayOfWeek day : DayOfWeek.values()) {
             if (day == DayOfWeek.SATURDAY || day == DayOfWeek.SUNDAY) continue;
 
-            /* 08:00 – 18:00  30-min slot + 5-min buffer  (skip lunch) */
-                for (int slot = 0; slot < 20; slot++) {
-                LocalTime start = LocalTime.of(8, 0).plusMinutes(slot * 35);
+            LocalTime cursor = LocalTime.of(8, 0);
+            while (cursor.isBefore(LocalTime.of(18, 0))) {
+                LocalTime start = cursor;
                 LocalTime end = start.plusMinutes(30);
 
-                if (start.getHour() == 13) continue;          // lunch break
 
-                /* 1.  look for an EXISTING database row  */
-                /* compute concrete date for this day in the requested week */
+                if (start.isBefore(LocalTime.of(14, 0)) && end.isAfter(LocalTime.of(13, 0))) {
+                    cursor = LocalTime.of(14, 0);
+                    continue;
+                }
+
+
                 java.time.LocalDate slotDate = monday.plusDays(day.getValue() - 1).plusWeeks(weekOffset);
 
                 Optional<Availability> opt = repository.findSlot(doctorId, day, start, slotDate);
 
-                /* 2.  only if it exists AND status == AVAILABLE  ->  Libre  */
                 if (opt.isPresent() && opt.get().getStatus() == AvailabilityStatus.AVAILABLE) {
                     Availability av = opt.get();
                     rows.add(new SlotRow(av.getId(), day, start, end, AvailabilityStatus.AVAILABLE));
                 } else {
-                    /* 3.  no row  ->  always Occupé  */
                     rows.add(new SlotRow(null, day, start, end, AvailabilityStatus.UNAVAILABLE));
                 }
+
+                cursor = cursor.plusMinutes(35);
             }
         }
         return rows;

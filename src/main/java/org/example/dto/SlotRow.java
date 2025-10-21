@@ -35,5 +35,8 @@ public class SlotRow {
     public LocalTime getEnd() {
         return end;
     }
-    public AvailabilityStatus getStatus() { return status; }
+
+    public AvailabilityStatus getStatus() {
+        return status;
+    }
 }

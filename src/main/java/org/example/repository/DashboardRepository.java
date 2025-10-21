@@ -14,8 +14,7 @@ import java.util.List;
 @ApplicationScoped
 public class DashboardRepository {
 
-    private final EntityManagerFactory emf =
-            Persistence.createEntityManagerFactory("CliniqueDigitalePU");
+    private final EntityManagerFactory emf = Persistence.createEntityManagerFactory("CliniqueDigitalePU");
 
     private EntityManager em() {
         return emf.createEntityManager();
@@ -51,11 +50,7 @@ public class DashboardRepository {
     public long countCanceledAppointmentsSince(LocalDate since) {
         EntityManager em = em();
         try {
-            return em.createQuery(
-                    "SELECT COUNT(a) FROM Appointment a WHERE a.statut = :s AND a.dateRdv >= :since", Long.class)
-                    .setParameter("s", org.example.entities.enums.AppointmentStatus.CANCELED)
-                    .setParameter("since", since)
-                    .getSingleResult();
+            return em.createQuery("SELECT COUNT(a) FROM Appointment a WHERE a.statut = :s AND a.dateRdv >= :since", Long.class).setParameter("s", org.example.entities.enums.AppointmentStatus.CANCELED).setParameter("since", since).getSingleResult();
         } finally {
             em.close();
         }
@@ -64,10 +59,7 @@ public class DashboardRepository {
     public List<Appointment> findUpcomingAppointments(int limit) {
         EntityManager em = em();
         try {
-            return em.createQuery("SELECT a FROM Appointment a JOIN FETCH a.patient p JOIN FETCH a.doctor d WHERE a.dateRdv >= :today ORDER BY a.dateRdv, a.heureRdv", Appointment.class)
-                    .setParameter("today", LocalDate.now())
-                    .setMaxResults(limit)
-                    .getResultList();
+            return em.createQuery("SELECT a FROM Appointment a JOIN FETCH a.patient p JOIN FETCH a.doctor d WHERE a.dateRdv >= :today ORDER BY a.dateRdv, a.heureRdv", Appointment.class).setParameter("today", LocalDate.now()).setMaxResults(limit).getResultList();
         } finally {
             em.close();
         }

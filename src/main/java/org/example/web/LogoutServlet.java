@@ -14,11 +14,9 @@ public class LogoutServlet extends HttpServlet {
     protected void doPost(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
 
-        /* kill session */
         HttpSession session = req.getSession(false);
         if (session != null) session.invalidate();
 
-        /* delete remember-me cookie */
         Cookie c = new Cookie("remember", "");
         c.setMaxAge(0);
         c.setPath("/");

@@ -35,7 +35,7 @@ public class DoctorMapper {
         Doctor d = new Doctor();
         d.setNom(dto.getNom());
         d.setEmail(dto.getEmail());
-        d.setPassword("TODO_HASHED");          // will be improved later
+        d.setPassword("TODO_HASHED");
         d.setMatricule(dto.getMatricule());
         d.setTitre(dto.getTitre());
         d.setActif(dto.getActif());

@@ -28,7 +28,6 @@ public class PatientCancelAppointmentServlet extends HttpServlet {
         Patient p = (Patient) authUser;
         Long apptId = Long.valueOf(req.getParameter("appointmentId"));
         try {
-            // Ensure appointment belongs to patient - repository/service already throws if not found
             appointmentService.cancelIfAllowed(apptId);
             resp.sendRedirect(req.getContextPath() + "/patient/dashboard?msg=cancelled");
         } catch (Exception e) {

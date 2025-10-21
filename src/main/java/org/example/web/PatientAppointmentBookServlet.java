@@ -46,15 +46,12 @@ public class PatientAppointmentBookServlet extends HttpServlet {
     Availability av = availabilityRepository.findById(availabilityId)
         .orElseThrow(() -> new RuntimeException("Availability not found"));
 
-    // Try to atomically reserve the slot by marking it UNAVAILABLE only if currently AVAILABLE
     boolean reserved = availabilityRepository.markUnavailableIfAvailable(availabilityId);
     if (!reserved) {
-        // slot already taken or not available
         resp.sendRedirect(req.getContextPath() + "/patient/dashboard?error=" + java.net.URLEncoder.encode("Slot not available", "UTF-8"));
         return;
     }
 
-        // compute appointment date from monday + day offset
         java.time.DayOfWeek day = av.getDay();
         LocalDate apptDate = monday.plusDays(day.getValue() - 1);
 
@@ -70,11 +67,9 @@ public class PatientAppointmentBookServlet extends HttpServlet {
             appointmentService.create(dto);
             resp.sendRedirect(req.getContextPath() + "/patient/dashboard?msg=appointment-booked");
         } catch (Exception e) {
-            // creation failed — revert availability to AVAILABLE
             try {
                 availabilityRepository.markAvailableIfUnavailable(availabilityId);
             } catch (Exception ex) {
-                // log but continue to propagate original error message
                 ex.printStackTrace();
             }
             resp.sendRedirect(req.getContextPath() + "/patient/dashboard?error=" + java.net.URLEncoder.encode(e.getMessage(), "UTF-8"));

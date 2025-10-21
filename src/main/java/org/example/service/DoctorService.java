@@ -43,7 +43,6 @@ public class DoctorService {
 
             Doctor existing = repository.findByIdAttached(id, em);
 
-            /* uniqueness checks (still via repository methods that use em) */
             if (!existing.getMatricule().equalsIgnoreCase(dto.getMatricule())
                     && repository.existsByMatriculeAndNotId(dto.getMatricule(), id, em))
                 throw new RuntimeException("Matricule already exists");
@@ -52,11 +51,9 @@ public class DoctorService {
                     && repository.existsByEmailAndNotId(dto.getEmail(), id, em))
                 throw new RuntimeException("Email already exists");
 
-            /* load new specialty inside same EM */
             Speciality newSpec = em.find(Speciality.class, dto.getSpecialtyId());
             if (newSpec == null) throw new RuntimeException("Speciality not found");
 
-            /* copy fields */
             existing.setNom(dto.getNom());
             existing.setEmail(dto.getEmail());
             existing.setMatricule(dto.getMatricule());
@@ -64,7 +61,6 @@ public class DoctorService {
             existing.setActif(dto.getActif());
             existing.setSpecialty(newSpec);
 
-            /* merge + map while still attached */
             Doctor merged = em.merge(existing);
             return mapper.toDto(merged);
         });

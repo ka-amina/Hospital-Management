@@ -23,7 +23,7 @@ public class DoctorRepository {
     public List<Doctor> findAll() {
         return em().createQuery(
                         "SELECT d FROM Doctor d " +
-                                "JOIN FETCH d.specialty s " +      // <--  specialty  (not speciality)
+                                "JOIN FETCH d.specialty s " +
                                 "JOIN FETCH s.department " +
                                 "ORDER BY d.nom", Doctor.class)
                 .getResultList();
