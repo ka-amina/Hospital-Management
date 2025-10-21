@@ -165,17 +165,20 @@ public class AvailabilityRepository {
    ------------------------------------------------------------------ */
     public Optional<Availability> findSlot(Long doctorId,
                                            DayOfWeek day,
-                                           LocalTime start) {
+                                           LocalTime start,
+                                           java.time.LocalDate date) {
         EntityManager em = em();
         try {
             return em.createQuery(
                             "SELECT a FROM Availability a " +
                                     "WHERE a.doctor.id = :doc " +
                                     "AND a.day = :day " +
-                                    "AND a.startTime = :start", Availability.class)
+                                    "AND a.startTime = :start " +
+                                    "AND (a.startDate IS NULL OR (:date BETWEEN a.startDate AND a.endDate))", Availability.class)
                     .setParameter("doc", doctorId)
                     .setParameter("day", day)
                     .setParameter("start", start)
+                    .setParameter("date", date)
                     .getResultStream()
                     .findFirst();
         } finally {

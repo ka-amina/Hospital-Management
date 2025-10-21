@@ -72,14 +72,17 @@ public class AvailabilityService {
             if (day == DayOfWeek.SATURDAY || day == DayOfWeek.SUNDAY) continue;
 
             /* 08:00 – 18:00  30-min slot + 5-min buffer  (skip lunch) */
-            for (int slot = 0; slot < 20; slot++) {
+                for (int slot = 0; slot < 20; slot++) {
                 LocalTime start = LocalTime.of(8, 0).plusMinutes(slot * 35);
                 LocalTime end = start.plusMinutes(30);
 
                 if (start.getHour() == 13) continue;          // lunch break
 
                 /* 1.  look for an EXISTING database row  */
-                Optional<Availability> opt = repository.findSlot(doctorId, day, start);
+                /* compute concrete date for this day in the requested week */
+                java.time.LocalDate slotDate = monday.plusDays(day.getValue() - 1).plusWeeks(weekOffset);
+
+                Optional<Availability> opt = repository.findSlot(doctorId, day, start, slotDate);
 
                 /* 2.  only if it exists AND status == AVAILABLE  ->  Libre  */
                 if (opt.isPresent() && opt.get().getStatus() == AvailabilityStatus.AVAILABLE) {

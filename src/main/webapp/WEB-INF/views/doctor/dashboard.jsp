@@ -38,9 +38,11 @@
 
     <!-- Quick actions -->
     <div class="flex items-center gap-4 mb-6">
-        <form method="post" action="${pageContext.request.contextPath}/admin/availability/generateWeek"
+        <form method="post" action="${pageContext.request.contextPath}/admin/availability/generate"
               class="inline">
             <input type="hidden" name="doctorId" value="${doctorId}">
+            <input type="hidden" name="startDate" value="${monday}" />
+            <input type="hidden" name="endDate" value="${monday.plusDays(4)}" />
             <button type="submit"
                     class="px-4 py-2 rounded-md bg-indigo-600 text-white hover:bg-indigo-700">
                 Générer ma semaine

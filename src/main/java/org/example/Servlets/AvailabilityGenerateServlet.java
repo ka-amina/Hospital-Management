@@ -25,10 +25,19 @@ public class AvailabilityGenerateServlet extends HttpServlet {
         DayOfWeek day = DayOfWeek.valueOf(req.getParameter("day")); // MONDAY etc.
         LocalDate startDate = LocalDate.parse(req.getParameter("startDate"));
         LocalDate endDate = startDate;
+        String endRaw = req.getParameter("endDate");
+        if (endRaw != null && !endRaw.isBlank()) {
+            LocalDate parsed = LocalDate.parse(endRaw);
+            if (parsed.isBefore(startDate)) {
+                req.getSession().setAttribute("error", "endDate must be >= startDate");
+                resp.sendRedirect(req.getContextPath() + "/admin/availability?doctorId=" + doctorId);
+                return;
+            }
+            endDate = parsed;
+        }
 
         service.generateDefaultSlots(doctorId, day, startDate, endDate);
 
-        resp.sendRedirect(req.getContextPath()
-                + "/org/example/Servlets/doctor/schedule?doctorId=" + doctorId + "&msg=generated");
+        resp.sendRedirect(req.getContextPath() + "/doctor/schedule?doctorId=" + doctorId + "&msg=generated");
     }
 }

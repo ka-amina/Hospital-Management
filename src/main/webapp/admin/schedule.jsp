@@ -19,11 +19,13 @@
         <h2 class="text-2xl font-semibold text-gray-800 dark:text-gray-100">Disponibilités</h2>
         <div class="flex items-center space-x-2 text-sm">
                 <!-- Doctor filter -->
-                <form method="get" action="" class="flex items-center space-x-2 mr-4">
+                <form method="get" action="${pageContext.request.contextPath}/doctor/schedule" class="flex items-center space-x-2 mr-4">
                     <input type="hidden" name="week" value="${week}" />
                     <select name="doctorId" class="px-2 py-1 border rounded dark:bg-gray-700 dark:text-gray-200">
                         <c:forEach items="${doctors}" var="doc">
-                            <option value="${doc.id}" ${doc.id == doctorId ? 'selected' : ''}>${doc.nom} - ${doc.specialtyName}</option>
+                            <option value="${doc.id}" <c:if test="${doc.id == doctorId}">selected="selected"</c:if>>
+                                ${doc.nom} - ${doc.specialtyName}
+                            </option>
                         </c:forEach>
                     </select>
                     <button type="submit" class="px-3 py-1 rounded bg-gray-200 dark:bg-gray-700 hover:bg-gray-300">Filtrer</button>
@@ -40,11 +42,13 @@
 
     <!-- Generate default week (admin only) -->
     <c:if test="${sessionScope.userRole eq 'ADMIN'}">
-        <form method="post" action="${pageContext.request.contextPath}/admin/availability/generateWeek"
+            <form method="post" action="${pageContext.request.contextPath}/admin/availability/generate"
               class="mb-4">
             <input type="hidden" name="doctorId" value="${doctorId}">
+                <input type="hidden" name="startDate" value="${monday}" />
+                <input type="hidden" name="endDate" value="${monday.plusDays(4)}" />
             <button class="px-4 py-2 rounded-md bg-indigo-600 text-white hover:bg-indigo-700">
-                Générer la semaine par défaut
+                                    Générer la semaine par défaut
             </button>
         </form>
     </c:if>
