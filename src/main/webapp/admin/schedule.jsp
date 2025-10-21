@@ -18,6 +18,16 @@
     <div class="flex items-center justify-between mb-6">
         <h2 class="text-2xl font-semibold text-gray-800 dark:text-gray-100">Disponibilités</h2>
         <div class="flex items-center space-x-2 text-sm">
+                <!-- Doctor filter -->
+                <form method="get" action="" class="flex items-center space-x-2 mr-4">
+                    <input type="hidden" name="week" value="${week}" />
+                    <select name="doctorId" class="px-2 py-1 border rounded dark:bg-gray-700 dark:text-gray-200">
+                        <c:forEach items="${doctors}" var="doc">
+                            <option value="${doc.id}" ${doc.id == doctorId ? 'selected' : ''}>${doc.nom} - ${doc.specialtyName}</option>
+                        </c:forEach>
+                    </select>
+                    <button type="submit" class="px-3 py-1 rounded bg-gray-200 dark:bg-gray-700 hover:bg-gray-300">Filtrer</button>
+                </form>
             <a href="?doctorId=${doctorId}&week=${week-1}"
                class="px-3 py-1 rounded bg-gray-200 dark:bg-gray-700 hover:bg-gray-300">&lt;</a>
             <span class="px-4 py-1 font-medium">
