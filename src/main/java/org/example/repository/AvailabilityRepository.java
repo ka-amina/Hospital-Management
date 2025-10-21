@@ -113,6 +113,52 @@ public class AvailabilityRepository {
         }
     }
 
+    /**
+     * Atomically mark an availability as UNAVAILABLE only if it is currently AVAILABLE.
+     * Returns true if the update changed one row (i.e. the slot was successfully reserved).
+     */
+    public boolean markUnavailableIfAvailable(Long id) {
+        EntityManager em = em();
+        try {
+            em.getTransaction().begin();
+            int rows = em.createQuery("UPDATE Availability a SET a.status = :newStatus WHERE a.id = :id AND a.status = :expected")
+                    .setParameter("newStatus", AvailabilityStatus.UNAVAILABLE)
+                    .setParameter("expected", AvailabilityStatus.AVAILABLE)
+                    .setParameter("id", id)
+                    .executeUpdate();
+            em.getTransaction().commit();
+            return rows == 1;
+        } catch (Exception e) {
+            if (em.getTransaction().isActive()) em.getTransaction().rollback();
+            throw e;
+        } finally {
+            em.close();
+        }
+    }
+
+    /**
+     * Revert an availability to AVAILABLE only if it is currently UNAVAILABLE.
+     * Useful to rollback a reservation when appointment creation fails.
+     */
+    public boolean markAvailableIfUnavailable(Long id) {
+        EntityManager em = em();
+        try {
+            em.getTransaction().begin();
+            int rows = em.createQuery("UPDATE Availability a SET a.status = :newStatus WHERE a.id = :id AND a.status = :expected")
+                    .setParameter("newStatus", AvailabilityStatus.AVAILABLE)
+                    .setParameter("expected", AvailabilityStatus.UNAVAILABLE)
+                    .setParameter("id", id)
+                    .executeUpdate();
+            em.getTransaction().commit();
+            return rows == 1;
+        } catch (Exception e) {
+            if (em.getTransaction().isActive()) em.getTransaction().rollback();
+            throw e;
+        } finally {
+            em.close();
+        }
+    }
+
     /* ------------------------------------------------------------------
    Returns the slot that starts exactly at the given time
    (or empty if none).

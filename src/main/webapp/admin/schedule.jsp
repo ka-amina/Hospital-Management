@@ -88,11 +88,12 @@
                                         <c:otherwise>
                                             <c:choose>
                                                 <c:when test="${sessionScope.userRole eq 'PATIENT'}">
-                                                    <form method="post"
-                                                          action="${pageContext.request.contextPath}/patient/appointment/book"
-                                                          class="inline">
-                                                        <input type="hidden" name="availabilityId"
-                                                               value="${sl.availabilityId}">
+                               <form method="post"
+                                  action="${pageContext.request.contextPath}/patient/appointment/book"
+                                  class="inline">
+                                <input type="hidden" name="availabilityId"
+                                    value="${sl.availabilityId}">
+                                <input type="hidden" name="monday" value="${monday}">
                                                         <button class="w-full px-2 py-1 rounded bg-green-600 text-white
                                    hover:bg-green-700 text-xs">
                                                             Réserver
