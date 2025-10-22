@@ -24,11 +24,11 @@ public class AppointmentsServlet extends HttpServlet {
         Object auth = req.getSession().getAttribute("authUser");
 
         if ("ADMIN".equals(role)) {
-            resp.sendRedirect(req.getContextPath() + "/admin/appointments");
+            resp.sendRedirect(req.getContextPath() + "/admin/dashboard");
             return;
         }
         if ("DOCTOR".equals(role)) {
-            resp.sendRedirect(req.getContextPath() + "/doctor/appointments");
+            resp.sendRedirect(req.getContextPath() + "/doctor/schedule");
             return;
         }
 
