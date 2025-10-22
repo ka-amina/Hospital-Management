@@ -27,7 +27,7 @@ public class DepartmentCreateServlet extends HttpServlet {
         dto.setDescription(req.getParameter("description"));
         try {
             service.create(dto);
-            resp.sendRedirect(req.getContextPath() + "/admin/dashboard?msg=dept-created");
+            resp.sendRedirect(req.getContextPath() + "/admin/departments?msg=dept-created");
         } catch (Exception e) {
             req.setAttribute("error", e.getMessage());
             req.setAttribute("dto", dto);

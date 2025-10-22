@@ -33,7 +33,7 @@ public class SpecialityCreateServlet extends HttpServlet {
         dto.setDepartmentId(Long.valueOf(req.getParameter("departmentId")));
         try {
             service.create(dto);
-            resp.sendRedirect(req.getContextPath() + "/admin/dashboard?msg=spec-created");
+            resp.sendRedirect(req.getContextPath() + "/admin/specialities?msg=spec-created");
         } catch (Exception e) {
             req.setAttribute("error", e.getMessage());
             req.setAttribute("dto", dto);

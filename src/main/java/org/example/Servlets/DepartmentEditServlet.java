@@ -31,7 +31,7 @@ public class DepartmentEditServlet extends HttpServlet {
         dto.setDescription(req.getParameter("description"));
         try {
             service.update(id, dto);
-            resp.sendRedirect(req.getContextPath() + "/admin/dashboard?msg=dept-updated");
+            resp.sendRedirect(req.getContextPath() + "/admin/departments?msg=dept-updated");
         } catch (Exception e) {
             req.setAttribute("error", e.getMessage());
             req.setAttribute("id", id);

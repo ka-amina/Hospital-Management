@@ -26,10 +26,10 @@
 
 <!-- ===== TOP BAR (matches dashboard) ===== -->
 <header class="flex items-center justify-between px-6 py-4 bg-white dark:bg-gray-800 shadow">
-    <a href="${pageContext.request.contextPath}/admin/dashboard"
+    <a href="${pageContext.request.contextPath}/admin/departments"
        class="flex items-center space-x-2 text-indigo-600 dark:text-indigo-400 font-semibold">
         <i class="fa-solid fa-arrow-left"></i>
-        <span>Back to Dashboard</span>
+        <span>Back to Departments</span>
     </a>
     <button id="themeToggle" class="p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700">
         <i class="fa-solid fa-sun text-yellow-500 dark:hidden"></i>
@@ -66,7 +66,7 @@
             </div>
 
             <div class="flex items-center justify-between">
-                <a href="${pageContext.request.contextPath}/admin/dashboard"
+                <a href="${pageContext.request.contextPath}/admin/departments"
                    class="px-4 py-2 rounded-md bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 hover:bg-gray-300 dark:hover:bg-gray-600 transition">
                     Cancel
                 </a>

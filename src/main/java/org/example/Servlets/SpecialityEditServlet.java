@@ -36,7 +36,7 @@ public class SpecialityEditServlet extends HttpServlet {
         dto.setDepartmentId(Long.valueOf(req.getParameter("departmentId")));
         try {
             service.update(id, dto);
-            resp.sendRedirect(req.getContextPath() + "/admin/dashboard?msg=spec-updated");
+            resp.sendRedirect(req.getContextPath() + "/admin/specialities?msg=spec-updated");
         } catch (Exception e) {
             req.setAttribute("error", e.getMessage());
             req.setAttribute("id", id);

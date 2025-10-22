@@ -10,14 +10,15 @@ import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
 
-@WebServlet("/admin/departments/delete")
-public class DepartmentDeleteServlet extends HttpServlet {
+@WebServlet("/admin/departments")
+public class DepartmentListServlet extends HttpServlet {
     @Inject
     private DepartmentService service;
 
-    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        Long id = Long.valueOf(req.getParameter("id"));
-        service.delete(id);
-        resp.sendRedirect(req.getContextPath() + "/admin/departments?msg=dept-deleted");
+    @Override
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp)
+            throws ServletException, IOException {
+        req.setAttribute("departments", service.findAll());
+        req.getRequestDispatcher("/admin/departmentList.jsp").forward(req, resp);
     }
 }
