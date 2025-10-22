@@ -32,30 +32,57 @@
         </div>
     </div>
 
-    <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-4">
-        <h3 class="text-lg font-semibold mb-3">Upcoming Appointments</h3>
-        <table class="min-w-full text-sm">
-            <thead>
-            <tr class="text-left text-gray-600 dark:text-gray-300">
-                <th>Date</th>
-                <th>Time</th>
-                <th>Patient</th>
-                <th>Doctor</th>
-                <th>Type</th>
-            </tr>
-            </thead>
-            <tbody>
-            <c:forEach items="${upcomingAppointments}" var="a">
-                <tr>
-                    <td>${a.dateRdv}</td>
-                    <td>${a.heureRdv}</td>
-                    <td>${a.patient.nom}</td>
-                    <td>${a.doctor.nom}</td>
-                    <td>${a.type}</td>
-                </tr>
-            </c:forEach>
-            </tbody>
-        </table>
+    <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
+        <h3 class="text-lg font-semibold mb-4 text-gray-800 dark:text-gray-100">Upcoming Appointments</h3>
+        
+        <c:choose>
+            <c:when test="${not empty upcomingAppointments}">
+                <div class="overflow-x-auto">
+                    <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700 text-sm">
+                        <thead class="bg-gray-50 dark:bg-gray-700">
+                            <tr class="text-left text-gray-600 dark:text-gray-300">
+                                <th class="px-4 py-3 font-medium">Date</th>
+                                <th class="px-4 py-3 font-medium">Time</th>
+                                <th class="px-4 py-3 font-medium">Patient</th>
+                                <th class="px-4 py-3 font-medium">Doctor</th>
+                                <th class="px-4 py-3 font-medium">Type</th>
+                                <th class="px-4 py-3 font-medium">Status</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
+                            <c:forEach items="${upcomingAppointments}" var="a">
+                                <tr class="hover:bg-gray-50 dark:hover:bg-gray-700/50">
+                                    <td class="px-4 py-3 text-gray-900 dark:text-gray-100">${a.dateRdv}</td>
+                                    <td class="px-4 py-3 text-gray-900 dark:text-gray-100">${a.heureRdv}</td>
+                                    <td class="px-4 py-3 text-gray-700 dark:text-gray-300">${a.patient.nom}</td>
+                                    <td class="px-4 py-3 text-gray-700 dark:text-gray-300">${a.doctor.nom}</td>
+                                    <td class="px-4 py-3 text-gray-600 dark:text-gray-400">${a.type}</td>
+                                    <td class="px-4 py-3">
+                                        <c:set var="statusName" value="${a.statut.name()}" />
+                                        <span class="inline-flex px-2 py-1 text-xs rounded-full
+                                            ${statusName == 'CONFIRMED' ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300' : 
+                                              statusName == 'PENDING' ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-300' :
+                                              statusName == 'CANCELED' ? 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300' :
+                                              'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300'}">
+                                            ${statusName}
+                                        </span>
+                                    </td>
+                                </tr>
+                            </c:forEach>
+                        </tbody>
+                    </table>
+                </div>
+            </c:when>
+            <c:otherwise>
+                <div class="text-center py-12">
+                    <i class="fa-solid fa-calendar-xmark text-6xl text-gray-300 dark:text-gray-600 mb-4"></i>
+                    <p class="text-gray-600 dark:text-gray-400 text-lg mb-2">No upcoming appointments</p>
+                    <p class="text-gray-500 dark:text-gray-500 text-sm">
+                        When patients book appointments, they will appear here.
+                    </p>
+                </div>
+            </c:otherwise>
+        </c:choose>
     </div>
 </section>
 

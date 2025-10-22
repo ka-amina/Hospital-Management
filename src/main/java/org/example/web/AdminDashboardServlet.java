@@ -26,11 +26,28 @@ public class AdminDashboardServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        req.setAttribute("totalPatients", dashboardService.totalPatients());
-        req.setAttribute("totalDoctors", dashboardService.totalDoctors());
-        req.setAttribute("totalAppointments", dashboardService.totalAppointments());
-        req.setAttribute("cancellationRate", String.format("%.1f", dashboardService.cancellationRateLastDays(30)));
-        req.setAttribute("upcomingAppointments", dashboardService.upcomingAppointments(10));
+        long totalPatients = dashboardService.totalPatients();
+        long totalDoctors = dashboardService.totalDoctors();
+        long totalAppointments = dashboardService.totalAppointments();
+        double cancellationRate = dashboardService.cancellationRateLastDays(30);
+        var upcomingAppointments = dashboardService.upcomingAppointments(10);
+
+        // Debug logging
+        System.out.println("=== ADMIN DASHBOARD ===");
+        System.out.println("Total Patients: " + totalPatients);
+        System.out.println("Total Doctors: " + totalDoctors);
+        System.out.println("Total Appointments: " + totalAppointments);
+        System.out.println("Cancellation Rate: " + String.format("%.1f", cancellationRate) + "%");
+        System.out.println("Upcoming Appointments Count: " + (upcomingAppointments != null ? upcomingAppointments.size() : 0));
+        if (upcomingAppointments != null && !upcomingAppointments.isEmpty()) {
+            System.out.println("First appointment: " + upcomingAppointments.get(0).getDateRdv() + " at " + upcomingAppointments.get(0).getHeureRdv());
+        }
+
+        req.setAttribute("totalPatients", totalPatients);
+        req.setAttribute("totalDoctors", totalDoctors);
+        req.setAttribute("totalAppointments", totalAppointments);
+        req.setAttribute("cancellationRate", String.format("%.1f", cancellationRate));
+        req.setAttribute("upcomingAppointments", upcomingAppointments);
 
         req.setAttribute("departments", departmentService.findAll());
         req.setAttribute("specialities", specialityService.findAll());
